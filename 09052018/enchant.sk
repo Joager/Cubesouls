@@ -1,0 +1,234 @@
+#on inventory click:
+#    clicked cursor is empty map:
+#        clicked item is empty map:
+#            cancel event
+
+on inventory click:
+    clicked inventory is player's inventory:
+        skellett clicked cursor is empty map:
+            if name of skellett clicked cursor contains "Enchant":
+                if skellett clicked item is any axe or any sword or any hoe:
+                    cancel event
+                    player's tool is any sword or any axe or any hoe:
+                        send "&cNão pode encantar com uma arma na mão!" to player
+                        stop
+                    player's gamemode is creative:
+                        send "&cCara, eu aviso numa boa, não tente fazer isso no criativo." to player
+                        stop
+                    set {_a} to skellett amount of item clicked cursor
+                    set {_a} to {_a} - 1
+                    set {_um} to name of skellett clicked cursor
+                    set {_do} to lore of skellett clicked cursor
+                    set {_item} to clicked item
+                    set {_n} to name of skellett clicked item
+                    set {_lore::*} to lore of skellett clicked item split at "||"
+                    if "%{_n}%" contains "[+11]":
+                        stop
+                    if name of skellett clicked cursor contains "Damage":
+                        loop 9 times:
+                            {_lore::%loop-number%} contains "DMG":
+                                set {_damage1} to {_lore::%loop-number%}
+                                replace the first 7 characters of {_damage1} with "" in {_damage1}
+                                replace every " " with "" in {_damage1}
+                                set {_damage2} to {_damage1} parsed as integer
+                                set {_damage} to {_damage2}
+                                set {_lo} to loop-number
+                        if name of skellett clicked cursor contains "Minor Damage":
+                            set {_f} to {_damage} + 1 # 1 = Minor Scroll
+                        if name of skellett clicked cursor contains "Major Damage":
+                            set {_f} to {_damage} + 3 # 3 = Major Scroll
+                        set {_lore::%{_lo}%} to "&eDMG: +%{_f}%"
+                    if name of skellett clicked cursor contains "Lifesteal":
+                        lore of skellett clicked item does not contain "LIFESTEAL":
+                            send "&cEste item não possui Lifesteal!" to player
+                            stop
+                        loop 9 times:
+                            {_lore::%loop-number%} contains "LIFESTEAL":
+                                set {_damage1} to {_lore::%loop-number%}
+                                replace the first 13 characters of {_damage1} with "" in {_damage1}
+                                replace every " " with "" in {_damage1}
+                                set {_damage2} to {_damage1} parsed as integer
+                                set {_damage} to {_damage2}
+                                set {_lo} to loop-number
+                        if name of skellett clicked cursor contains "Minor Lifesteal":
+                            set {_f} to {_damage} + 1 # 1 = Minor Scroll
+                        if name of skellett clicked cursor contains "Major Lifesteal":
+                            set {_f} to {_damage} + 3 # 3 = Major Scroll
+                        set {_lore::%{_lo}%} to "&eLIFESTEAL: +%{_f}%"
+                    set {_lore} to join {_lore::*} by "||"
+                    if "%{_n}%" contains "[+":
+                        set {_pqp} to false # stop loop parece estar bugado (stop loop looks bugged)
+                        loop 10 times:
+                            {_pqp} is false:
+                                if "%{_n}%" contains "[+%loop-number%]":
+                                    replace all "[+%loop-number%]" in {_n} with ""
+                                    set {_no} to loop-number + 1
+                                    set {_lv} to {_no}
+                                    set {_n} to "%{_n}%&e[+%{_no}%]"
+                                    set {_pqp} to true
+                    if "%{_n}%" does not contain "[+":
+                        set {_n} to "%{_n}%&e[+1]"
+                        set {_lv} to 1
+                    set current cursor of player to air
+                    set {_chance} to {_lv} * 8
+                    chance of {_chance}%:
+                        send "&cO &3encantamento&c &nfalhou&c e o &eScroll&c foi consumido!" to player
+                        if {_a} >= 1:
+                            set player's cursor to {_a} of empty map named "%{_um}%" with lore "%{_do}%"
+                        stop
+                    set clicked item to {_item} named "%{_n}%" with lore "%{_lore}%"
+                    send "&eVocê obteve &a&nsucesso&e em seu encantamento!" to player
+                    play sound "entity.player.levelup" for all players at location of player with pitch 0 volume 2
+                    launch flickering ball firework colored yellow at location of block below player timed 0
+                    if {_a} >= 1:
+                        set player's cursor to {_a} of empty map named "%{_um}%" with lore "%{_do}%"
+                    stop
+#            loop 10 times:
+#                {_origname2} contains "[+%loop-number%]":
+#                    {enchantlore.%player%::3} does not contain "CRIT CHANCE:":
+#                        replace all "[+%loop-number%]" in {_origname2} with ""
+#                        set {_no} to loop-number + 1
+#                        set {_item.pablo.%player%} to "%{_origname2}%&e[+%{_no}%]"                    
+                    
+#   command /lootz:
+#      trigger:
+#          giveLoot(player, 1)
+                
+                
+#on inventory click:
+#    name of skellett clicked cursor contains "Orb":
+#        broadcast "Debugando orb"
+#        set {_a} to skellett clicked cursor
+#        broadcast "%{_a}%"
+#        skellett clicked item is any axe or any sword or any hoe:
+#            broadcast "%clicked item%"
+#            set {_slot} to click slot
+#            broadcast "%{_slot}%"
+#            set {_z} to skellett clicked item
+#            set {_n} to name of skellett clicked item
+#            broadcast "%type of skellett clicked item%"
+#            broadcast "Debugando weapon"
+#            set slot {_slot} of player's inventory to air
+#            set name of current cursor of player to "%{_n}%[+1]"
+#            set current cursor of player to {_z} named "%{_n}%[+1]"
+    
+#on rightclick on enchantment table: 20:27 21:27
+#    cancel event
+#    name of player's held item is "&5&lENCHANT ITEM &9- &aFIRE DMG I":
+#        {isench.%player%} is true:
+#            send "&c&lJA ESTA ENCANTANDO!"
+#            stop
+#        send "&3Coloque a &f&lARMA &3que deseja encantar na mesa..." to player
+#        remove 1 paper from player's tool
+#        set {isbeingafaggot1.%player%} to true
+#        set {isench.%player%} to true
+#        stop
+#    name of player's held item is "&5&lENCHANT ITEM &9- &aCRITICAL CHANCE I":
+#        {isench.%player%} is true:
+#            send "&c&lJA ESTA ENCANTANDO!"
+#            stop
+#        send "&3Coloque a &f&lARMA &3que deseja encantar na mesa..." to player
+#        remove 1 paper from player's tool
+#        set {isbeingafaggot2.%player%} to true
+#        set {isench.%player%} to true
+#        stop
+#    {isbeingafaggot1.%player%} is true:
+#        player's held item is any sword, any axe, any hoe, shears or any shovel:
+#            set {enchantlore.%player%::*} to lore of player's held item split at "||"
+#            set {_origname} to name of player's held item
+#            {_origname} contains "[+11]":
+#                message "&c&lESTA ARMA JA CHEGOU AO NIVEL MAXIMO!"
+#                message "&cDiga adeus a seu papel!"
+#                close inventory of player
+#                clear {isbeingafaggot1.%player%}
+#                set {isench.%player%} to false
+#                stop
+#            {_origname} does not contain "[+":
+#                set {_item.pablo.%player%} to "%{_origname}%&e[+1]"
+#                wait 1 tick
+#                set name of player's tool to "%{_item.pablo.%player%}%"
+#                wait 1 tick
+#                set the 4th line of lore of player's tool to "&5FIRE DMG: +1"
+#                message "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                clear {isbeingafaggot1.%player%}
+#                set {isench.%player%} to false
+#                stop
+#            loop 10 times:
+#                {_origname} contains "[+%loop-number%]":
+#                    {enchantlore.%player%::4} does not contain "FIRE DMG:":
+#                        replace all "[+%loop-number%]" in {_origname} with ""
+#                        set {_no} to loop-number + 1
+#                        set {_item.pablo.%player%} to "%{_origname}%&e[+%{_no}%]"
+#                        wait 1 tick
+#                        set name of player's tool to "%{_item.pablo.%player%}%"
+#                        wait 1 tick
+#                        set the 4th line of lore of player's tool to "&5FIRE DMG: +1"
+#                        send "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                        clear {isbeingafaggot1.%player%}
+#                        set {isench.%player%} to false
+#                        stop
+#                    {enchantlore.%player%::4} contains "FIRE DMG:":
+#                        replace all "[+%loop-number%]" in {_origname} with ""
+#                        set {_last} to last character of {enchantlore.%player%::4}
+#                        set {_fd} to subtext of {enchantlore.%player%::4} from (first index of "+" in {enchantlore.%player%::4} + 1) to (last index of {_last} in {enchantlore.%player%::4}) parsed as integer
+#                        set {_no} to {_fd} + 1
+#                        set {_item.pablo.%player%} to "%{_origname}%&e[+%{_no}%]"
+#                        wait 1 tick
+#                        set name of player's held item to "%{_item.pablo.%player%}%"
+#                        wait 1 tick
+#                        set the 4th line of lore of player's tool to "&5FIRE DMG: +%{_no}%"
+#                        send "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                        clear {isbeingafaggot1.%player%}
+#                        set {isench.%player%} to false
+#                        stop
+#            clear {isbeingafaggot1.%player%}
+#    {isbeingafaggot2.%player%} is true:
+#        player's held item is any sword, any axe, any hoe, shears or any shovel:
+#            set {enchantlore.%player%::*} to lore of player's tool split at "||"
+#            set {_origname2} to name of player's tool
+#            {_origname2} contains "[+11]":
+#                message "&c&lESTA ARMA JA CHEGOU AO NIVEL MAXIMO!"
+#                message "&cDiga adeus a seu papel!"
+#                close inventory of player
+#                clear {isbeingafaggot1.%player%}
+#                set {isench.%player%} to false
+#                stop
+#            {_origname2} does not contain "[+":
+#                set {_item.pablo.%player%} to "%{_origname2}%&e[+1]"
+#                wait 1 tick
+#                set name of player's tool to "%{_item.pablo.%player%}%"
+#                wait 1 tick
+#                set the 3rd line of lore of player's tool to "&3CRIT CHANCE: +1%%"
+#                message "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                clear {isbeingafaggot2.%player%}
+#                set {isench.%player%} to false
+#                stop
+#            loop 10 times:
+#                {_origname2} contains "[+%loop-number%]":
+#                    {enchantlore.%player%::3} does not contain "CRIT CHANCE:":
+#                        replace all "[+%loop-number%]" in {_origname2} with ""
+#                        set {_no} to loop-number + 1
+#                        set {_item.pablo.%player%} to "%{_origname2}%&e[+%{_no}%]"
+#                        wait 1 tick
+#                        set name of player's tool to "%{_item.pablo.%player%}%"
+#                        wait 1 tick
+#                        set the 3rd line of lore of player's tool to "&3CRIT CHANCE: +1%%"
+#                        send "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                        clear {isbeingafaggot2.%player%}
+#                        set {isench.%player%} to false
+#                        stop
+#                    {enchantlore.%player%::3} contains "CRIT CHANCE:":
+#                        replace all "[+%loop-number%]" in {_origname2} with ""
+#                        set {_last} to last character of {enchantlore.%player%::3}
+#                        set {_fd} to subtext of {enchantlore.%player%::3} from (first index of "+" in {enchantlore.%player%::3} + 1) to (last index of {_last} in {enchantlore.%player%::3} - 1) parsed as integer
+#                        set {_no} to {_fd} + 1
+#                        set {_item.pablo.%player%} to "%{_origname2}%&e[+%{_no}%]"
+#                        wait 1 tick
+#                        set name of player's held item to "%{_item.pablo.%player%}%"
+#                        wait 1 tick
+#                        set the 3rd line of lore of player's tool to "&3CRIT CHANCE: +%{_no}%%%"
+#                        send "&f&lITEM ENCANTADO COM SUCESSO&f." to event-player
+#                        clear {isbeingafaggot2.%player%}
+#                        set {isench.%player%} to false
+#                        stop
+#            clear {isbeingafaggot2.%player%}

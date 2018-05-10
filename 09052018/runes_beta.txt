@@ -1,0 +1,28 @@
+#
+# Runes
+#
+
+function runeBook(p: player):
+	open chest with 6 rows named "&d&lRunas" to {_p}
+	loop 18 times:
+		if {runes::%{_p}%::%loop-number%} is not set:
+			format gui slot loop-number of {_p} with light gray stained glass pane named "&7Slot não liberado" with lore "&eEvolua mais para liberar||&eeste slot." to do nothing
+		else:
+			set {_item} to {runes::%{_p}%::%loop-number%::type} parsed as itemtype
+			format gui slot loop-number of {_p} with {_item} named {runes::%{_p}%::%loop-number%::name} with lore {runes::%{_p}%::%loop-number%::lore} to do nothing
+		
+		
+function updateRunes(p: player):
+	
+function changeRune(p: player):
+
+on inventory click:
+	name of clicked inventory is "&d&lRunas":
+		name of skellett clicked cursor contains "&bRune of ":
+		# adicionar restricoes aqui como (nao e uma sword:) se alguma coisa um dia for criada com esse nome
+			cancel event
+			player's gamemode is creative:
+				send "&cCara, eu aviso numa boa, não tente fazer isso no criativo." to player
+				stop
+			
+
